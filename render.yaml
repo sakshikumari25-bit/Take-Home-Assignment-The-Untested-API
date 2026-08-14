@@ -2,8 +2,9 @@ services:
   - type: web
     name: task-manager-api
     env: node
-    buildCommand: cd task-api && npm install
-    startCommand: cd task-api && npm start
+    rootDir: task-api
+    buildCommand: npm install
+    startCommand: npm start
     envVars:
-      - key: PORT
-        value: 3000
+      - key: NODE_ENV
+        value: production
