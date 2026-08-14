@@ -1,8 +1,10 @@
 # Take-Home Assignment Submission — The Untested API
 
 **Candidate:** Taroo (Full Stack Developer Intern Candidate)  
-**Repository:** [Take-Home-Assignment-The-Untested-API](https://github.com/rohit-ups/Take-Home-Assignment-The-Untested-API)  
+**GitHub Repository:** https://github.com/sakshikumari25-bit/Take-Home-Assignment-The-Untested-API  
+**Live API Endpoint:** https://icy-doors-push.loca.lt/tasks  
 **Deadline:** 16th August 2026, 11:00 PM  
+
 
 ---
 
