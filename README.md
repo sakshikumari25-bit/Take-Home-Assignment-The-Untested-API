@@ -1,6 +1,14 @@
 # Take-Home Assignment — The Untested API
 
+> [!NOTE]
+> **Assignment Deliverables Completed:**
+> - 📄 **[BUG_REPORT.md](./BUG_REPORT.md)**: Detailed report on 5 identified bugs, root causes, and fixes.
+> - 📄 **[SUBMISSION.md](./SUBMISSION.md)**: Design decisions, test coverage summary, future testing strategy, and production release notes.
+> - 🧪 **Test Suite**: 56 unit and integration tests with **97.41% code coverage** (`npm run coverage`).
+> - ✨ **New Endpoint**: `PATCH /tasks/:id/assign` implemented and tested.
+
 A 2-day take-home assignment. You'll read unfamiliar code, write tests, track down bugs, and ship a small feature.
+
 
 Read **[ASSIGNMENT.md](./ASSIGNMENT.md)** for the full brief before you start.
 
