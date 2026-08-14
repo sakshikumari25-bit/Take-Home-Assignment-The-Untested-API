@@ -52,7 +52,15 @@ const update = (id, fields) => {
 
   // Protect system/read-only fields from being overwritten
   const { id: _, createdAt: __, completedAt: ___, ...allowedFields } = fields;
-  const updated = { ...tasks[index], ...allowedFields };
+  const currentTask = tasks[index];
+  const updated = { ...currentTask, ...allowedFields };
+
+  if (allowedFields.status === 'done' && !currentTask.completedAt) {
+    updated.completedAt = new Date().toISOString();
+  } else if (allowedFields.status && allowedFields.status !== 'done') {
+    updated.completedAt = null;
+  }
+
   tasks[index] = updated;
   return updated;
 };
@@ -69,10 +77,12 @@ const completeTask = (id) => {
   const task = findById(id);
   if (!task) return null;
 
+  const completedAt = task.status === 'done' && task.completedAt ? task.completedAt : new Date().toISOString();
+
   const updated = {
     ...task,
     status: 'done',
-    completedAt: new Date().toISOString(),
+    completedAt,
   };
 
   const index = tasks.findIndex((t) => t.id === id);

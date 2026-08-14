@@ -36,6 +36,17 @@ describe('Validators Unit Tests', () => {
     test('returns error for invalid dueDate', () => {
       expect(validateCreateTask({ title: 'Test', dueDate: 'not-a-date' })).toMatch(/dueDate must be a valid ISO date/i);
     });
+
+    test('returns error when payload is null or non-object', () => {
+      expect(validateCreateTask(null)).toMatch(/request body must be an object/i);
+      expect(validateCreateTask(123)).toMatch(/request body must be an object/i);
+      expect(validateCreateTask('string')).toMatch(/request body must be an object/i);
+      expect(validateCreateTask([1, 2])).toMatch(/request body must be an object/i);
+    });
+
+    test('returns error when description is provided as a non-string', () => {
+      expect(validateCreateTask({ title: 'Test', description: 123 })).toMatch(/description must be a string/i);
+    });
   });
 
   describe('validateUpdateTask', () => {
@@ -45,9 +56,19 @@ describe('Validators Unit Tests', () => {
       expect(validateUpdateTask({})).toBeNull();
     });
 
+    test('returns error when payload is null or non-object', () => {
+      expect(validateUpdateTask(null)).toMatch(/request body must be an object/i);
+      expect(validateUpdateTask(456)).toMatch(/request body must be an object/i);
+      expect(validateUpdateTask([1, 2])).toMatch(/request body must be an object/i);
+    });
+
     test('returns error if provided title is invalid', () => {
       expect(validateUpdateTask({ title: '' })).toMatch(/title must be a non-empty string/i);
       expect(validateUpdateTask({ title: 123 })).toMatch(/title must be a non-empty string/i);
+    });
+
+    test('returns error when description is provided as a non-string', () => {
+      expect(validateUpdateTask({ description: 999 })).toMatch(/description must be a string/i);
     });
 
     test('returns error for invalid status update', () => {
@@ -70,6 +91,12 @@ describe('Validators Unit Tests', () => {
 
     test('returns error when assignee field is missing', () => {
       expect(validateAssignTask({})).toMatch(/assignee is required/i);
+    });
+
+    test('returns error when payload is null or non-object', () => {
+      expect(validateAssignTask(null)).toMatch(/assignee is required/i);
+      expect(validateAssignTask('not-an-object')).toMatch(/assignee is required/i);
+      expect(validateAssignTask([1, 2])).toMatch(/assignee is required/i);
     });
 
     test('returns error when assignee is not a string', () => {

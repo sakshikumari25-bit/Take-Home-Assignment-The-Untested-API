@@ -2,8 +2,14 @@ const VALID_STATUSES = ['todo', 'in_progress', 'done'];
 const VALID_PRIORITIES = ['low', 'medium', 'high'];
 
 const validateCreateTask = (body) => {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return 'request body must be an object';
+  }
   if (!body.title || typeof body.title !== 'string' || body.title.trim() === '') {
     return 'title is required and must be a non-empty string';
+  }
+  if (body.description !== undefined && typeof body.description !== 'string') {
+    return 'description must be a string';
   }
   if (body.status && !VALID_STATUSES.includes(body.status)) {
     return `status must be one of: ${VALID_STATUSES.join(', ')}`;
@@ -18,8 +24,14 @@ const validateCreateTask = (body) => {
 };
 
 const validateUpdateTask = (body) => {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return 'request body must be an object';
+  }
   if (body.title !== undefined && (typeof body.title !== 'string' || body.title.trim() === '')) {
     return 'title must be a non-empty string';
+  }
+  if (body.description !== undefined && typeof body.description !== 'string') {
+    return 'description must be a string';
   }
   if (body.status && !VALID_STATUSES.includes(body.status)) {
     return `status must be one of: ${VALID_STATUSES.join(', ')}`;
@@ -34,7 +46,7 @@ const validateUpdateTask = (body) => {
 };
 
 const validateAssignTask = (body) => {
-  if (!body || !body.assignee || typeof body.assignee !== 'string' || body.assignee.trim() === '') {
+  if (!body || typeof body !== 'object' || Array.isArray(body) || !body.assignee || typeof body.assignee !== 'string' || body.assignee.trim() === '') {
     return 'assignee is required and must be a non-empty string';
   }
   return null;

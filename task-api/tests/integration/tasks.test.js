@@ -189,6 +189,9 @@ describe('Task API Integration Tests', () => {
 
       const res2 = await request(app).patch(`/tasks/${task.id}/assign`).send({ assignee: '   ' });
       expect(res2.status).toBe(400);
+
+      const res3 = await request(app).patch(`/tasks/${task.id}/assign`).send({ assignee: 12345 });
+      expect(res3.status).toBe(400);
     });
 
     test('returns 404 Not Found when task ID does not exist', async () => {
@@ -198,6 +201,27 @@ describe('Task API Integration Tests', () => {
 
       expect(res.status).toBe(404);
       expect(res.body).toEqual({ error: 'Task not found' });
+    });
+  });
+
+  describe('Global Error Handling & Payload Edge Cases', () => {
+    test('BUG-06 verification: returns 400 Bad Request when request contains malformed JSON', async () => {
+      const res = await request(app)
+        .post('/tasks')
+        .set('Content-Type', 'application/json')
+        .send('{ "title": "Malformed Json'); // Missing closing quote and brace
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty('error', 'Invalid JSON payload');
+    });
+
+    test('returns 400 Bad Request when POST /tasks payload contains non-string description', async () => {
+      const res = await request(app)
+        .post('/tasks')
+        .send({ title: 'Valid Title', description: 12345 });
+
+      expect(res.status).toBe(400);
+      expect(res.body).toHaveProperty('error', 'description must be a string');
     });
   });
 });

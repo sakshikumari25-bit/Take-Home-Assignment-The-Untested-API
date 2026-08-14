@@ -151,6 +151,19 @@ describe('taskService Unit Tests', () => {
       expect(updated.createdAt).toBe(originalCreatedAt);
       expect(updated.title).toBe('Title Changed');
     });
+
+    test('sets completedAt when status is updated to done and resets completedAt when status changes from done', () => {
+      const task = taskService.create({ title: 'Status Transition Test', status: 'todo' });
+      expect(task.completedAt).toBeNull();
+
+      const doneTask = taskService.update(task.id, { status: 'done' });
+      expect(doneTask.status).toBe('done');
+      expect(doneTask.completedAt).not.toBeNull();
+
+      const inProgressTask = taskService.update(task.id, { status: 'in_progress' });
+      expect(inProgressTask.status).toBe('in_progress');
+      expect(inProgressTask.completedAt).toBeNull();
+    });
   });
 
   describe('remove', () => {
@@ -180,6 +193,15 @@ describe('taskService Unit Tests', () => {
       const highTask = taskService.create({ title: 'High Priority Task', priority: 'high' });
       const completed = taskService.completeTask(highTask.id);
       expect(completed.priority).toBe('high');
+    });
+
+    test('BUG-09 verification: preserves original completedAt timestamp when task is completed again', () => {
+      const task = taskService.create({ title: 'Already Done Task' });
+      const completed1 = taskService.completeTask(task.id);
+      const originalCompletedAt = completed1.completedAt;
+
+      const completed2 = taskService.completeTask(task.id);
+      expect(completed2.completedAt).toBe(originalCompletedAt);
     });
 
     test('returns null if completing non-existent task', () => {

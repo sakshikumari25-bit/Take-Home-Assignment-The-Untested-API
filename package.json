@@ -1,0 +1,10 @@
+{
+  "name": "take-home-assignment-the-untested-api",
+  "version": "1.0.0",
+  "description": "Task Manager API Take-Home Assignment Workspace",
+  "scripts": {
+    "start": "npm --prefix task-api start",
+    "test": "npm --prefix task-api test",
+    "coverage": "npm --prefix task-api run coverage"
+  }
+}

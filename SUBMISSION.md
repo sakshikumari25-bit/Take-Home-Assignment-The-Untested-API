@@ -1,20 +1,18 @@
 # Take-Home Assignment Submission — The Untested API
 
-**Candidate:** Taroo (Full Stack Developer Intern Candidate)  
-**GitHub Repository:** https://github.com/sakshikumari25-bit/Take-Home-Assignment-The-Untested-API  
-**Live API Endpoint:** https://icy-doors-push.loca.lt/tasks  
-**Deadline:** 16th August 2026, 11:00 PM  
-
+**Candidate:** Full Stack Developer Intern Candidate  
+**Repository:** Task Manager API (`task-api`)  
 
 ---
 
 ## Executive Summary
 
 This submission includes:
-1. **Full Test Suite**: 56 unit and integration tests using Jest and Supertest with **97.41% code coverage** (100% on routes, services, and validators).
-2. **Bug Report (`BUG_REPORT.md`)**: Detailed breakdown of 5 critical/medium severity bugs found in the codebase.
-3. **Bug Remediation**: Complete fixes for all 5 identified bugs in `src/services/taskService.js` and `src/routes/tasks.js`.
-4. **New Feature (`PATCH /tasks/:id/assign`)**: Implemented REST endpoint for task assignment with strict validation and full test coverage.
+1. **Full Automated Test Suite**: 65 unit and integration tests using Jest and Supertest with **97.66% code coverage** (100% on routes, services, and validators).
+2. **Bug Report (`BUG_REPORT.md`)**: Detailed breakdown of 10 identified bugs (high, medium, and low severity) found across all components.
+3. **Bug Remediation**: Complete fixes for all 10 identified bugs in `src/app.js`, `src/services/taskService.js`, `src/routes/tasks.js`, and `src/utils/validators.js`.
+4. **New Feature (`PATCH /tasks/:id/assign`)**: Implemented REST endpoint for task assignment with strict validation, error handling, and 100% test coverage.
+5. **Development Notes (`DEVELOPMENT_NOTES.md`)**: Comprehensive documentation of design decisions, architecture understanding, validation logic, and trade-offs.
 
 ---
 
@@ -24,19 +22,20 @@ This submission includes:
 -----------------|---------|----------|---------|---------|-------------------
 File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
 -----------------|---------|----------|---------|---------|-------------------
-All files        |   97.41 |    93.47 |   93.33 |   97.16 |
- src             |   69.23 |       75 |       0 |   69.23 |
-  app.js         |   69.23 |       75 |       0 |   69.23 | 10-11,17-18
+All files        |   97.66 |    94.57 |   96.66 |   97.45 |
+ src             |   73.33 |    77.77 |      50 |   73.33 |
+  app.js         |   73.33 |    77.77 |      50 |   73.33 | 13-14,20-21
  src/routes      |     100 |    91.66 |     100 |     100 |
   tasks.js       |     100 |    91.66 |     100 |     100 |
- src/services    |     100 |     87.5 |     100 |     100 |
-  taskService.js |     100 |     87.5 |     100 |     100 |
+ src/services    |     100 |    91.66 |     100 |     100 |
+  taskService.js |     100 |    91.66 |     100 |     100 |
  src/utils       |     100 |      100 |     100 |     100 |
   validators.js  |     100 |      100 |     100 |     100 |
 -----------------|---------|----------|---------|---------|-------------------
 Test Suites: 3 passed, 3 total
-Tests:       56 passed, 56 total
+Tests:       65 passed, 65 total
 Snapshots:   0 total
+Time:        1.067 s
 ```
 
 ---
@@ -45,16 +44,16 @@ Snapshots:   0 total
 
 ### Endpoint Specification
 - **Method & Route:** `PATCH /tasks/:id/assign`
-- **Request Body:** `{ "assignee": "Taroo Developer" }`
+- **Request Body:** `{ "assignee": "Jane Doe" }`
 - **Responses:**
   - `200 OK`: Returns the updated task object with `assignee` set.
-  - `400 Bad Request`: Returned if `assignee` is missing, not a string, or contains only whitespace (`{ "error": "assignee is required and must be a non-empty string" }`).
+  - `400 Bad Request`: Returned if `assignee` is missing, not a string, empty, or whitespace-only (`{ "error": "assignee is required and must be a non-empty string" }`).
   - `404 Not Found`: Returned if task ID does not exist (`{ "error": "Task not found" }`).
 
 ### Design & Validation Decisions
 1. **HTTP Verb Selection:** `PATCH` was selected as specified, matching partial resource updates (updating only the `assignee` attribute while keeping other fields intact).
 2. **Whitespace Trimming:** Assignee strings are trimmed automatically before storage to eliminate accidental leading/trailing spaces.
-3. **Strict Validation:** Rejects empty strings, whitespace-only strings (`"   "`), numbers, and non-string inputs.
+3. **Strict Validation:** Rejects empty strings, whitespace-only strings (`"   "`), numbers, booleans, non-string inputs, or non-object payloads.
 4. **Re-assignment Handling:** Assigning a task that already has an assignee updates the assignee to the new name without error.
 
 ---
@@ -63,7 +62,6 @@ Snapshots:   0 total
 
 ### 1. What would you test next if you had more time?
 - **Concurrent Request / Race Conditions:** Test in-memory mutation safety under high concurrency or simulated latency.
-- **Malformed JSON Payloads:** Edge cases for invalid JSON strings sent in request bodies or missing content-type headers.
 - **SQL / NoSQL Injection & Payload Oversizing:** Test payload size limits to protect against memory exhaustion attacks.
 - **Load & Stress Testing:** Benchmark endpoint performance when the in-memory store grows to 10,000+ tasks.
 
@@ -71,6 +69,7 @@ Snapshots:   0 total
 - **`completeTask` Priority Reset:** Surprised to see `completeTask` hardcoding `priority: 'medium'`, which unintentionally degraded high-priority tasks upon completion.
 - **Pagination Indexing Formula:** The pagination calculation `offset = page * limit` was 0-indexed in a 1-indexed URL interface, causing page 1 to skip the first 10 items.
 - **Partial Matching for Status Filter:** `getByStatus` used `String.prototype.includes`, making `/tasks?status=do` match both `todo` and `done` tasks.
+- **Express JSON Error Status:** Express error middleware returning 500 for invalid JSON syntax instead of 400 Bad Request.
 
 ### 3. Any questions you'd ask before shipping this to production?
 - **Persistence Layer:** Are we moving from in-memory storage to a persistent database (PostgreSQL/MongoDB)? How will state survive application restarts?
